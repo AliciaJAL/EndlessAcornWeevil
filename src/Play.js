@@ -17,16 +17,30 @@ class Play extends Phaser.Scene {
 
 		
 		this.backGrass.setSize(window.innerWidth, window.innerHeight)
-		
+		this.backGrass.setPosition(window.innerWidth/2, window.innerHeight/2)	
 
 		
+		let minX = 100, maxX = window.innerWidth;
+		let minY = 200, maxY =  window.innerHeight;
+
+		let randomMushX = Phaser.Math.Between(minX, maxX);
+		let randomMushY = Phaser.Math.Between(minY, maxY);
+
+
+		this.mushroom = this.add.sprite(randomMushX, randomMushY, 'Mushroom').setScale(0.10);
+
+		this.unit = window.innerWidth/1000
+		this.aspectRatio = 2488 / 1677
+
+		let cy = 500 // units
+		let cx = 500 * this.aspectRatio // units
 		this.player = this.add.sprite(config.width, config.height, 'player')
-		this.player.setPosition(window.innerWidth/2, window.innerHeight/2)	
+		this.player.setPosition(cx, cy)
 		
 
 		this.box2dBody = this.world.createBody({
 			type: "dynamic",
-			position: planck.Vec2(window.innerWidth/1.5, window.innerHeight/1.5),
+			position: planck.Vec2(cx, cy),
 		})
 		
 		// anims hooks it to animation manager
@@ -35,8 +49,8 @@ class Play extends Phaser.Scene {
 			frameRate: 0,
 			repeat: -1, //this repeats infinitly
 			frames: this.anims.generateFrameNumbers('player', {
-				start: 1,
-				end: 1
+				start: 0,
+				end: 0
 			})
 
 		})
@@ -44,9 +58,9 @@ class Play extends Phaser.Scene {
 		this.anims.create({
 			key: 'crouch',
 			frameRate: 5,
-			repeat: -1, //this repeats infinitly
+			repeat: -1, 
 			frames: this.anims.generateFrameNumbers('player', {
-				start: 3,
+				start: 4,
 				end: 4
 			})
 
@@ -63,8 +77,11 @@ class Play extends Phaser.Scene {
 
 		})
 
-
+		let randomBirdX = Phaser.Math.Between(minX, maxX);
+		let randomBirdY = Phaser.Math.Between(minY, maxY);
+		this.bird = this.add.sprite(randomBirdX, randomBirdY, 'bird').setScale(0.5)
 		
+
 		this.upKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W)
         this.downKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S)
         this.leftKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A)
@@ -80,10 +97,25 @@ class Play extends Phaser.Scene {
 		dt /= 1000
 
 		this.unit = window.innerWidth/1000
-		//this.background.tilePositionX += 1
-		this.backGrass.setDisplaySize(window.innerHeight* 2488 / 1677, window.innerHeight)
-		this.backGrass.setPosition(window.innerWidth/2, window.innerHeight/2)	
-		this.player.setDisplaySize(this.unit * 150, this.unit * 150)
+		//this.aspectRatio = 2488 / 1677
+
+
+		this.backGrass.tilePositionX += 2
+		this.backGrass.setDisplaySize(window.innerHeight*this.aspectRatio , window.innerHeight)
+
+		
+		this.time.addEvent({
+			delay: 2000, // Spawns every 2 seconds
+			callback: () => {
+				let randomX = Phaser.Math.Between(150, window.inner*this.aspectRatio)
+				let randomY = Phaser.Math.Between(150, window.innerHeight*this.aspectRatio)
+				this.add.sprite(randomX, randomY, 'Mushroom').setScale(0.20)
+				;
+			},
+			loop: true
+		});
+
+		this.player.setDisplaySize(this.unit * 100, this.unit * 100)
 
 
 		// on weeble physics update (tells the physics system how the charater is moving)
@@ -94,9 +126,9 @@ class Play extends Phaser.Scene {
 
 		// on weeble update (renders changes to the sprite position)
 		let aproxPos = this.box2dBody.getPosition().clone()
-		console.log(aproxPos)
+		// console.log(aproxPos)
 		this.player.setPosition(aproxPos.x * this.unit, aproxPos.y * this.unit)
-		console.log(this.player)
+		// console.log(this.player)
 		/*
 		let playerMovement
 		playerVector.length() ? playerMovement = 'walk' : playerMovement = 'idle'
@@ -108,10 +140,21 @@ class Play extends Phaser.Scene {
             fowardForce = this.wheelAcc * (World.upKey.isDown - 1.25 * World.downKey.isDown)
             steeringForce = World.rightKey.isDown - World.leftKey.isDown
         }
+
+		// Animation
+		if (this.leftKey.isDown || this.rightKey.isDown || this.upKey.isDown || this.downKey.isDown) {
+			if (this.player.anims.currentAnim && this.player.anims.currentAnim.key !== 'walking') {
+				this.player.play('walking'); 
+			}
+		} else {
+		   
+				this.player.play('idle'); 
 			
-
-		
-    }
-
+		}
+	
+		if (this.crouchKey.isDown) {
+			this.player.play('crouch');
+		}
     
+	}
 }
