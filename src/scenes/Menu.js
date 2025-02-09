@@ -31,19 +31,42 @@ class Menu extends Phaser.Scene {
 		this.menuImage.setSize(window.innerWidth, window.innerHeight);
 
 		
-		/*
-        // Animation configuration
-        this.anims.create({
-            key: 'explode',
-            frames: this.anims.generateFrameNumbers('explosion', { start: 0, end: 9, first: 0}),
-            frameRate: 30
-        })
-			*/
-		
-			// define keys
-		// keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT)
-		// keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT)
+	
 		this.keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
+
+		this.anims.create({
+			key: 'idle',
+			frameRate: 0,
+			repeat: -1, //this repeats infinitly
+			frames: this.anims.generateFrameNumbers('player', {
+				start: 0,
+				end: 0
+			})
+
+		})
+
+		this.anims.create({
+			key: 'crouch',
+			frameRate: 5,
+			repeat: -1, 
+			frames: this.anims.generateFrameNumbers('player', {
+				start: 4,
+				end: 4
+			})
+
+		})
+
+		this.anims.create({
+			key: 'walking',
+			frameRate: 5,
+			repeat: -1, //this repeats infinitly
+			frames: this.anims.generateFrameNumbers('player', {
+				start: 0,
+				end: 2
+			})
+
+		})
+
 		}
 
     update() {
@@ -54,5 +77,4 @@ class Menu extends Phaser.Scene {
 		this.menuImage.setDisplaySize(window.innerHeight * 2488 / 1677, window.innerHeight)
 		this.menuImage.setPosition(window.innerWidth/2, window.innerHeight/2)		
     }
-
 }
