@@ -36,13 +36,23 @@ class Play extends Phaser.Scene {
 		
 		this.player = new Weevil(this, cx, cy)
 		this.player.createPhysicsBody(cx,cy)
+		this.player.setPosition(cx, cy)
 
-		//let randomBirdX = Phaser.Math.Between(minX, maxX);
-		// let randomBirdY = Phaser.Math.Between(minY, maxY);
 		// this.bird = this.add.sprite(0, cy, 'bird').setScale(0.5)
 
+		// Circular motion parameters
+		this.circle = {
+            centerX: cx,   // Circle center (can change over time)
+            centerY: cy,
+            radius: Phaser.Math.Between(50, window.innerHeight), // Radius
+            angle: Math.random() * Math.PI * 2,  // Starting angle
+            speed: Phaser.Math.FloatBetween(0.5, 2) // Speed (radians per second)
+        };
+
 		// Bird sprite setup
-        this.bird = this.add.sprite(0, cy, 'bird').setScale(0.5)
+		this.bird = new Bird(this, 0, 0)
+		this.bird.createPhysicsBody(0,0)
+		this.bird.setPosition(0, 0)
 
 		
 
@@ -52,21 +62,15 @@ class Play extends Phaser.Scene {
         this.rightKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D)
 		this.crouchKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT)
 
-		// Set up the camera to follow the player
-        //this.cameras.main.startFollow(this.player);
-       // this.cameras.main.setFollowOffset(0, 0); // Adjust if needed (e.g., follow the player exactly)
-
-        // Define a left boundary (threshold) for the player to be destroyed if it's too far left
-        this.leftBoundary = 100; // If the player moves 100px left of the camera, it gets destroyed
- 
-		 // Set camera bounds to prevent scrolling beyond the background
-		 this.cameras.main.setBounds(0, 0, this.backgroundWidth, this.backgroundHeight);
+		// Set camera bounds to prevent scrolling beyond the background
+		this.cameras.main.setBounds(0, 0, this.backgroundWidth, this.backgroundHeight);
     }
 
     update(time, dt) {
 		time /= 1000
 		dt /= 1000
 		this.player.update(time,dt)
+		this.bird.update(time,dt)
 
 
 		this.unit = window.innerWidth/1000
@@ -75,9 +79,14 @@ class Play extends Phaser.Scene {
 		this.backGrass.setDisplaySize(window.innerWidth , window.innerHeight)
 
 		let scrollSpeed = 200 * this.unit
-		this.backGrass.tilePositionX += scrollSpeed * dt
-		
 
+		if (time+1 % 30 == 0) {
+			scrollSpeed = 200 * this.unit
+		}
+
+		this.backGrass.tilePositionX += scrollSpeed * dt
+
+      
 	
 	}
 }
