@@ -3,6 +3,7 @@ class Weevil extends Phaser.GameObjects.Sprite {
         super(scene, x, y, texture) // call Sprite parent class
         scene.add.existing(this)           // add Weevil to existing scene
 		this.scene = scene
+		this.moveSpeed = 600
 	}
 
 	createPhysicsBody(x,y) {
@@ -11,8 +12,29 @@ class Weevil extends Phaser.GameObjects.Sprite {
 		position: planck.Vec2(x, y),
 		})
 	}
-	
+
+	checkCollide() {
+		let pos = this.box2dBody.getPosition()
+		console.log(this.scene)
+		for (let bird of this.scene.birds) {
+			let otherPos = bird.box2dBody.getPosition()
+			let dx = pos.x - otherPos.x
+			let dy = pos.y - otherPos.y
+			let dist = Math.sqrt(dx*dx + dy*dy)
+			console.log(dist)
+			if (dist < 100) return true
+		}
+		return false
+	}
+
 	update(time,dt) {
+
+		if (time > 3 && this.checkCollide() && !(this.scene.crouchKey.isDown)) {
+			this.destroy()
+			return
+		}
+
+
 		let scrollSpeed = 200 * this.scene.unit
 
 		// Check if player is out of bounce	
@@ -25,10 +47,12 @@ class Weevil extends Phaser.GameObjects.Sprite {
 		
 
 		// on weevil physics update (tells the physics system how the charater is moving)
+		if ( !(this.scene.crouchKey.isDown)) {
 		this.box2dBody.setLinearVelocity(planck.Vec2
 			(this.scene.rightKey.isDown - this.scene.leftKey.isDown,	// left-right velocity
 				this.scene.downKey.isDown - this.scene.upKey.isDown)	// up-down velocity
-			.mul(300).add({x: -(scrollSpeed), y: 0}))
+			.mul(this.moveSpeed).add({x: -(scrollSpeed), y: 0}))
+		}
 
 		this.scene.world.step(dt); // Run physics simulation
 
@@ -56,5 +80,5 @@ class Weevil extends Phaser.GameObjects.Sprite {
 			this.play('crouch');
 		}
 
-		}
 	}
+}

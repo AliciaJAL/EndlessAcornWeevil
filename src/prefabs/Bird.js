@@ -1,40 +1,39 @@
 class Bird extends Phaser.GameObjects.Sprite {
-    constructor(scene, x, y, texture = "bird") {
+    constructor(scene, x, y, texture = "bird", radius = 400) {
         super(scene, x, y, texture)
-        this.scene = scene;
+        
         // Add the bird sprite to the scene
-        this.scene.add.existing(this)
+        scene.add.existing(this)
 		this.scene = scene
-    }
-	createPhysicsBody(x,y) {
+
 		this.box2dBody = this.scene.world.createBody({
 			type: "dynamic",
 			position: planck.Vec2(x, y),
-			})
-		}
+		})
+
+		this.x0 = x
+		this.y0 = y
+		this.flyRad = radius
+		this.omega = 0.5 + Math.random()
+		this.theta = 0
+		
+    }
 
     // Update method for the bird (you can make the bird move or animate)
     update(time, dt) {
-		this.setScale(window.innerWidth/1750)
-    
+		let unit = this.scene.unit
+		this.setDisplaySize(200*unit, 200*unit)
 
-		  // Update the angle with random speed
-		  this.scene.circle.angle += this.scene.circle.speed * dt;
-		  this.scene.circle.radius += Math.sin(time / 1000) * 50; 
-  
-  
-		  let prevX = this.x;
-		  let prevY = this.y;
-  
-  
-		  // Apply circular motion using sine and cosine
-		  this.x = this.scene.circle.centerX + Math.cos(this.scene.circle.angle) * this.scene.circle.radius;
-		  this.y = this.scene.circle.centerY + Math.sin(this.scene.circle.angle) * this.scene.circle.radius;
+		this.theta += this.omega * dt
+		let newX = this.x0 + Math.cos(this.theta)*this.flyRad
+		let newY = this.y0 + Math.sin(this.theta)*this.flyRad
+		this.box2dBody.setPosition({x: newX, y: newY});
+
+		let boxPos = this.box2dBody.getPosition()
+
+		this.setPosition(boxPos.x * unit, boxPos.y * unit)
 		  
-		  
-		  // Calculate angle of movement (rotation)
-		  let angle = Math.atan2(this.y - prevY, this.x - prevX);
-		  this.scene.bird.rotation = angle;
-  
+		this.rotation = this.theta + 3.14159/2
+		
     }
 }

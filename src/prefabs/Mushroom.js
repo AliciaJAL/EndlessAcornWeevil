@@ -1,5 +1,5 @@
 class Mushroom extends Phaser.GameObjects.Sprite {
-	constructor(scene, x, y, texture = "player") {
+	constructor(scene, x, y, texture ="mushroom") {
         super(scene, x, y, texture) // call Sprite parent class
         scene.add.existing(this)           // add Mushroom to existing scene
 		this.scene = scene
@@ -9,13 +9,15 @@ class Mushroom extends Phaser.GameObjects.Sprite {
 		}
 
 	update(time, dt){
-		this.mushroom.x -= scrollSpeed * dt
+		let scrollSpeed = 200 * this.scene.unit
+		this.x -= scrollSpeed * dt
 
 
 		if (this.mushroom.x < 0) {
             this.mushroom.destroy();
 			create();
         }
+		scrollSpeed += 5
 	}
 
 	create() {

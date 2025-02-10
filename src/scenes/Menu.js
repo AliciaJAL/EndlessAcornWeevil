@@ -19,10 +19,10 @@ class Menu extends Phaser.Scene {
 			
 
         // load audio
-        this.load.audio('birdFlap', '.assets/birds-flapping-wings-14763.mp3')
-		this.load.audio('birdCaw', '.assets/raven-call-72946.mp3')
-		this.load.audio('footsteps', 'assets/footsteps-dirt-01-73777.mp3')
-		this.load.audio('collect', '.assets/collect-points-190037.mp3')
+        // this.load.audio('birdFlap', '.assets/birds-flapping-wings-14763.mp3')
+		// this.load.audio('birdCaw', '.assets/raven-call-72946.mp3')
+		// this.load.audio('footsteps', 'assets/footsteps-dirt-01-73777.mp3')
+		// this.load.audio('collect', '.assets/collect-points-190037.mp3')
 		this.load.audio('click', 'assets/cartoon-142268.mp3')
 		
 		

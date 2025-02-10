@@ -23,7 +23,7 @@ class Play extends Phaser.Scene {
 		let randomMushX = Phaser.Math.Between(minX, maxX);
 		let randomMushY = Phaser.Math.Between(minY, maxY);
 
-		this.mushroom = this.add.sprite(randomMushX, randomMushY, 'Mushroom').setScale(0.10);
+		//this.mushroom = new Mushroom (this, randomMushX, randomMushY);
 
 
 		this.unit = window.innerWidth/1000
@@ -40,19 +40,18 @@ class Play extends Phaser.Scene {
 
 		// this.bird = this.add.sprite(0, cy, 'bird').setScale(0.5)
 
-		// Circular motion parameters
-		this.circle = {
-            centerX: cx,   // Circle center (can change over time)
-            centerY: cy,
-            radius: Phaser.Math.Between(50, window.innerHeight), // Radius
-            angle: Math.random() * Math.PI * 2,  // Starting angle
-            speed: Phaser.Math.FloatBetween(0.5, 2) // Speed (radians per second)
-        };
-
 		// Bird sprite setup
-		this.bird = new Bird(this, 0, 0)
-		this.bird.createPhysicsBody(0,0)
-		this.bird.setPosition(0, 0)
+		this.birds = [
+			new Bird(this, 0, cy), 
+			//new Bird(this, 200, cy), 
+			new Bird(this, cx, 0), 
+			new Bird(this, cx+cx, cy+cy),
+			// new Bird(this, 200, 200),
+			//new Bird(this, 800, 500, 'bird', 500), 
+			//new Bird(this, 400, 900, 'bird', 600), 
+			//new Bird(this, 1100, 700, 'bird', 800), 
+		]
+		
 
 		
 
@@ -63,16 +62,37 @@ class Play extends Phaser.Scene {
 		this.crouchKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT)
 
 		// Set camera bounds to prevent scrolling beyond the background
-		this.cameras.main.setBounds(0, 0, this.backgroundWidth, this.backgroundHeight);
+		this.cameras.main.setBounds(0, 0, this.backgroundWidth, this.backgroundHeight)
+
+		
+
+		this.timerText = this.add.text(window.innerWidth - 100, 20, 'Time: 0', {
+			fontSize: '30px',
+			fill: '#ffffff'
+		}).setOrigin(1, 0); // Align text to top-right corner
+		
+		this.elapsedTime = 0; // Initialize timer
+		
+
     }
 
     update(time, dt) {
 		time /= 1000
 		dt /= 1000
 		this.player.update(time,dt)
-		this.bird.update(time,dt)
 
+		for (let bird of this.birds) bird.update(time, dt)
 
+		this.elapsedTime += dt / 1000; // Convert from milliseconds to seconds
+		this.timerText.setText('Time: ' + Math.round(time)); // Show 2 decimal places
+
+		this.scale.on('resize', (gameSize) => {
+			this.timerText.setPosition(gameSize.width - 100, 20);
+		});
+
+		if (this.userDataA === "bird" && this.userDataB === "player" || this.userDataA === "player" && this.userDataB === "bird") {
+			console.log("Bird collided with Player!")
+		}
 		this.unit = window.innerWidth/1000
 		//this.aspectRatio = 2488 / 1677
 
@@ -80,9 +100,9 @@ class Play extends Phaser.Scene {
 
 		let scrollSpeed = 200 * this.unit
 
-		if (time+1 % 30 == 0) {
-			scrollSpeed = 200 * this.unit
-		}
+		
+		scrollSpeed += 5
+		
 
 		this.backGrass.tilePositionX += scrollSpeed * dt
 
