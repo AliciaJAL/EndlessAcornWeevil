@@ -1,13 +1,17 @@
 class Menu extends Phaser.Scene {
+
+	static playStartTime = 0
+
     constructor() {
         super('menuScene')
     }
-
+	/*
     preload() {
         // load images/tile sprites
         this.load.image('backGrass', './assets/Background.png')
         this.load.image('Mushroom', './assets/Mushroom.png')
 		this.load.image('bird', './assets/Bird.png')
+		this.load.image('gameOver', './assets/GameOver.png')
 		this.load.image('menuImage', './assets/Menu.png')
 		
 		
@@ -19,15 +23,16 @@ class Menu extends Phaser.Scene {
 			
 
         // load audio
-        // this.load.audio('birdFlap', '.assets/birds-flapping-wings-14763.mp3')
-		// this.load.audio('birdCaw', '.assets/raven-call-72946.mp3')
-		// this.load.audio('footsteps', 'assets/footsteps-dirt-01-73777.mp3')
-		// this.load.audio('collect', '.assets/collect-points-190037.mp3')
+        this.load.audio('birdFlap', 'assets/birds-flapping-wings-14763.mp3')
+		this.load.audio('birdCaw', 'assets/raven-call-72946.mp3')
+		this.load.audio('restart', 'assets/collect-points-190037.mp3')
 		this.load.audio('click', 'assets/cartoon-142268.mp3')
+		this.load.audio('backGround', 'assets/nature-creation-239785.mp3')
 		
 		
         
     }
+	*/
 
     create() {
 		this.menuImage = this.add.sprite(0, 0, "menuImage").setOrigin(0.5, 0.5)
@@ -71,13 +76,30 @@ class Menu extends Phaser.Scene {
 			})
 
 		})
+
+
+		this.music = this.sound.add('backGround', { 
+			loop: true, 
+			detune: 0, // Ensures no pitch distortions
+			rate: 1,   // Default playback speed
+			volume: 0.5
+		});
+		this.music.play()
+		
 		
 		}
 
-    update() {
+    update(time, dt) {
+		time /= 1000
+		dt /= 1000
+	
+
         if (Phaser.Input.Keyboard.JustDown(this.keySPACE)) {
-			this.sound.play('click')
+			this.music.pause()
+			this.sound.play('birdFlap', {volume: 1})
+			this.music.resume()
             this.scene.start('playScene')
+			Menu.playStartTime = time
 			
         }
 		this.menuImage.setDisplaySize(window.innerHeight * 2488 / 1677, window.innerHeight)

@@ -27,20 +27,21 @@ class Weevil extends Phaser.GameObjects.Sprite {
 		return false
 	}
 
+
 	update(time,dt) {
 
 		if (time > 3 && this.checkCollide() && !(this.scene.crouchKey.isDown)) {
-			this.destroy()
-			return
+			this.scene.sound.play('birdCaw', {volume: 2})
+			return this.scene.scene.start('gameOverScene')
 		}
-
+ 
 
 		let scrollSpeed = 200 * this.scene.unit
 
 		// Check if player is out of bounce	
-		if (this.x < 0) {
-			this.destroy();
-			console.log("Game Over")
+		if (this.x < -5 || this.y < this.scene.unit*this.scene.aspectRatio || this.x > 1800 || this.y > 1000) {
+			this.scene.sound.play('footsteps', {volume: 4})
+			return this.scene.scene.start('gameOverScene')
 		}
 		
 		this.setDisplaySize(this.scene.unit * 100, this.scene.unit * 100)
@@ -60,24 +61,26 @@ class Weevil extends Phaser.GameObjects.Sprite {
 		let aproxPos = this.box2dBody.getPosition().clone()
 		if (aproxPos) {
 			this.setPosition(aproxPos.x * this.scene.unit, aproxPos.y * this.scene.unit);
-		} else {
-			console.log("Box2D position is undefined");
-		}
+		} 
 		
 
 		// Animation
 		if (this.scene.leftKey.isDown || this.scene.rightKey.isDown || this.scene.upKey.isDown || this.scene.downKey.isDown) {
 			if (this.anims.currentAnim && this.anims.currentAnim.key !== 'walking') {
-				this.play('walking'); 
+				this.play('walking')
 			}
 		} else {
 		   
-				this.play('idle'); 
+				this.play('idle')
 			
 		}
 	
 		if (this.scene.crouchKey.isDown) {
-			this.play('crouch');
+			this.play('crouch')
+			this.box2dBody.setLinearVelocity(planck.Vec2
+				(this.scene.rightKey.isDown - this.scene.leftKey.isDown,	// left-right velocity
+					this.scene.downKey.isDown - this.scene.upKey.isDown)	// up-down velocity
+				.mul(0).add({x: -(scrollSpeed), y: 0}))
 		}
 
 	}

@@ -14,7 +14,7 @@ class Bird extends Phaser.GameObjects.Sprite {
 		this.x0 = x
 		this.y0 = y
 		this.flyRad = radius
-		this.omega = 0.5 + Math.random()
+		this.omega = 0.5 
 		this.theta = 0
 		
     }
@@ -34,6 +34,9 @@ class Bird extends Phaser.GameObjects.Sprite {
 		this.setPosition(boxPos.x * unit, boxPos.y * unit)
 		  
 		this.rotation = this.theta + 3.14159/2
+
+
+		this.omega *= 1.05**dt
 		
     }
 }
