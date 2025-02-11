@@ -38,15 +38,25 @@ class Weevil extends Phaser.GameObjects.Sprite {
 		let scrollSpeed = 200 * this.scene.unit
 
 		// Check if player is out of bounce	
-		if (this.x < -5 || this.y < this.scene.unit*this.scene.aspectRatio ||this.y > 1000) {
+		if (this.x < -5) {
 			this.scene.sound.play('footsteps', {volume: 6})
 			return this.scene.scene.start('gameOverScene')
 		}
 
 		if (this.x > window.innerWidth) {
-			console.log('too far')
 			this.x -= 10
 			this.box2dBody.setPosition(planck.Vec2(this.x / this.scene.unit, this.y / this.scene.unit))
+		}
+
+		if (this.y < this.scene.unit*this.scene.aspectRatio){
+			this.y += 10
+			this.box2dBody.setPosition(planck.Vec2(this.x / this.scene.unit, this.y / this.scene.unit))
+		}
+
+		if (this.y > window.innerHeight) {
+			this.y -= 10
+			this.box2dBody.setPosition(planck.Vec2(this.x / this.scene.unit, this.y / this.scene.unit))
+
 		}
 		
 		this.setDisplaySize(this.scene.unit * 100, this.scene.unit * 100)
