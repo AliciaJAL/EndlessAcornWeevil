@@ -36,7 +36,7 @@ class Bird extends Phaser.GameObjects.Sprite {
 		this.rotation = this.theta + 3.14159/2
 
 
-		this.omega *= 1.02**dt
+		this.omega *= 1.03**dt
 		
     }
 }
