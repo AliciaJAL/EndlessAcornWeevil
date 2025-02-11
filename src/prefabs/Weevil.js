@@ -3,7 +3,7 @@ class Weevil extends Phaser.GameObjects.Sprite {
         super(scene, x, y, texture) // call Sprite parent class
         scene.add.existing(this)           // add Weevil to existing scene
 		this.scene = scene
-		this.moveSpeed = 600
+		this.moveSpeed = 500
 	}
 
 	createPhysicsBody(x,y) {
@@ -21,7 +21,6 @@ class Weevil extends Phaser.GameObjects.Sprite {
 			let dx = pos.x - otherPos.x
 			let dy = pos.y - otherPos.y
 			let dist = Math.sqrt(dx*dx + dy*dy)
-			console.log(dist)
 			if (dist < 100) return true
 		}
 		return false
@@ -31,7 +30,7 @@ class Weevil extends Phaser.GameObjects.Sprite {
 	update(time,dt) {
 
 		if (time > 3 && this.checkCollide() && !(this.scene.crouchKey.isDown)) {
-			this.scene.sound.play('birdCaw', {volume: 2})
+			this.scene.sound.play('birdCaw', {volume: 3})
 			return this.scene.scene.start('gameOverScene')
 		}
  
@@ -39,9 +38,15 @@ class Weevil extends Phaser.GameObjects.Sprite {
 		let scrollSpeed = 200 * this.scene.unit
 
 		// Check if player is out of bounce	
-		if (this.x < -5 || this.y < this.scene.unit*this.scene.aspectRatio || this.x > 1800 || this.y > 1000) {
-			this.scene.sound.play('footsteps', {volume: 4})
+		if (this.x < -5 || this.y < this.scene.unit*this.scene.aspectRatio ||this.y > 1000) {
+			this.scene.sound.play('footsteps', {volume: 6})
 			return this.scene.scene.start('gameOverScene')
+		}
+
+		if (this.x > window.innerWidth) {
+			console.log('too far')
+			this.x -= 10
+			this.box2dBody.setPosition(planck.Vec2(this.x / this.scene.unit, this.y / this.scene.unit))
 		}
 		
 		this.setDisplaySize(this.scene.unit * 100, this.scene.unit * 100)
